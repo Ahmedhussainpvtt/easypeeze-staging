@@ -217,73 +217,7 @@
       { passive: true }
     );
 
-  // Scroll-scrubbed feature tornado (desktop). Mobile / reduced-motion use CSS grid.
-  const tornado = document.querySelector('.feature-tornado');
-  const tornadoTrack = tornado && tornado.querySelector('.feature-tornado__track');
-  const tornadoStage = tornado && tornado.querySelector('#tornado-stage');
-  const tornadoLabel = tornado && tornado.querySelector('#tornado-active-label');
-  const tornadoCards = tornadoStage
-    ? [...tornadoStage.querySelectorAll('[data-tornado-card]')]
-    : [];
-
-  const tornadoDesktop = window.matchMedia('(min-width: 901px)').matches;
-
-  if (tornado && tornadoTrack && tornadoCards.length && tornadoDesktop && !reduce) {
-    const n = tornadoCards.length;
-    let raf = 0;
-    let focusIdx = -1;
-
-    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-    const easeOut = (t) => 1 - Math.pow(1 - t, 2.4);
-
-    const paint = () => {
-      raf = 0;
-      const total = Math.max(1, tornadoTrack.offsetHeight - window.innerHeight);
-      const top = tornadoTrack.getBoundingClientRect().top;
-      const p = clamp(-top / total, 0, 1);
-      let best = 0;
-      let bestLocal = -1;
-
-      tornadoCards.forEach((card, i) => {
-        const start = i / n;
-        const end = (i + 0.92) / n;
-        const local = easeOut(clamp((p - start) / Math.max(0.001, end - start), 0, 1));
-        if (local > bestLocal) {
-          bestLocal = local;
-          best = i;
-        }
-
-        const spin = (1 - local) * (Math.PI * 2.15) + i * 0.55;
-        const radius = (1 - local) * 260;
-        const x = Math.cos(spin) * radius;
-        const y = Math.sin(spin) * radius * 0.42 + (1 - local) * 90 - i * 6 * local;
-        const z = Math.sin(spin * 0.7) * radius * 0.35;
-        const rotY = (1 - local) * 420 + i * 12;
-        const rotZ = (1 - local) * 80 * Math.sin(spin);
-        const scale = 0.52 + local * 0.48;
-        const opacity = clamp(local * 1.35, 0, 1);
-
-        card.style.opacity = String(opacity);
-        card.style.zIndex = String(Math.round(10 + local * 40 + i));
-        card.style.transform =
-          `translate3d(calc(-50% + ${x.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px), ${z.toFixed(1)}px)` +
-          ` rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
-      });
-
-      if (best !== focusIdx) {
-        focusIdx = best;
-        tornadoCards.forEach((c, i) => c.classList.toggle('is-focus', i === best));
-        if (tornadoLabel) {
-          tornadoLabel.textContent = tornadoCards[best].getAttribute('data-label') || '';
-        }
-      }
-    };
-
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(paint);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    paint();
+    document.addEventListener('mouseleave', clearTrail);
+    window.addEventListener('blur', clearTrail);
   }
 })();
