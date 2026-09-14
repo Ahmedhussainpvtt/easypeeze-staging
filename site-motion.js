@@ -221,3 +221,74 @@
     window.addEventListener('blur', clearTrail);
   }
 })();
+
+/* Feature tornado — separate IIFE so it cannot break cursor / reveal motion */
+(() => {
+  const tornado = document.querySelector('.feature-tornado');
+  if (!tornado) return;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const desktop = window.matchMedia('(min-width: 901px)').matches;
+  if (reduce || !desktop) {
+    tornado.classList.add('is-ready');
+    return;
+  }
+
+  const track = tornado.querySelector('.feature-tornado__track');
+  const stage = tornado.querySelector('#tornado-stage');
+  const label = tornado.querySelector('#tornado-active-label');
+  const cards = stage ? [...stage.querySelectorAll('[data-tornado-card]')] : [];
+  if (!track || !cards.length) return;
+
+  const n = cards.length;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let raf = 0;
+  let focusIdx = -1;
+
+  const paint = () => {
+    raf = 0;
+    const total = Math.max(1, track.offsetHeight - window.innerHeight);
+    const top = track.getBoundingClientRect().top;
+    const p = clamp(-top / total, 0, 1);
+    /* Focus slides 0 → n-1; nearby cards stay in a ring, not piled on center */
+    const focus = p * (n - 1);
+    const idx = Math.round(focus);
+
+    cards.forEach((card, i) => {
+      const d = i - focus;
+      const abs = Math.abs(d);
+      const angle = d * 0.95 + focus * 0.4;
+      const radius = abs < 0.08 ? 0 : 48 + Math.min(abs, 2.6) * 88;
+      const x = Math.sin(angle) * radius;
+      const y = Math.cos(angle) * radius * 0.42;
+      const z = -abs * 55;
+      const rotY = d * 28;
+      const rotZ = d * 6;
+      const scale = clamp(1.02 - abs * 0.2, 0.48, 1.02);
+      const opacity = clamp(1.05 - abs * 0.38, 0, 1);
+
+      card.style.opacity = String(opacity);
+      card.style.zIndex = String(Math.round(30 - abs * 10 + i));
+      card.style.transform =
+        `translate3d(calc(-50% + ${x.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px), ${z.toFixed(1)}px)` +
+        ` rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
+      card.classList.toggle('is-focus', i === idx);
+      /* Side cards still clickable when reasonably visible */
+      card.style.pointerEvents = opacity > 0.45 ? 'auto' : 'none';
+    });
+
+    if (idx !== focusIdx) {
+      focusIdx = idx;
+      if (label) label.textContent = cards[idx].getAttribute('data-label') || '';
+    }
+  };
+
+  const onScroll = () => {
+    if (!raf) raf = requestAnimationFrame(paint);
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  paint();
+  tornado.classList.add('is-ready');
+})();
