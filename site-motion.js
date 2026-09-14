@@ -226,10 +226,6 @@
     ? [...tornadoStage.querySelectorAll('[data-tornado-card]')]
     : [];
 
-  tornadoCards.forEach((card) => {
-    /* cards are <a href> — no extra click wiring needed */
-  });
-
   const tornadoDesktop = window.matchMedia('(min-width: 901px)').matches;
 
   if (tornado && tornadoTrack && tornadoCards.length && tornadoDesktop && !reduce) {
