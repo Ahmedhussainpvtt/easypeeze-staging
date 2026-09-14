@@ -1,0 +1,127 @@
+[
+  {
+    "slug": "merge-pdf",
+    "term": "Merge PDF",
+    "definition": "Combine two or more PDF files into a single document."
+  },
+  {
+    "slug": "split-pdf",
+    "term": "Split PDF",
+    "definition": "Divide a PDF into separate files or extract page ranges."
+  },
+  {
+    "slug": "compress-pdf",
+    "term": "Compress PDF",
+    "definition": "Reduce PDF file size for email, WhatsApp, and upload portals."
+  },
+  {
+    "slug": "ocr-pdf",
+    "term": "OCR PDF",
+    "definition": "Optical character recognition that makes scanned PDFs searchable."
+  },
+  {
+    "slug": "esign-pdf",
+    "term": "eSign PDF",
+    "definition": "Placing a drawn or uploaded signature on a PDF document."
+  },
+  {
+    "slug": "pdf-editor",
+    "term": "PDF editor",
+    "definition": "Software to edit, annotate, organize, or convert PDF files."
+  },
+  {
+    "slug": "searchable-pdf",
+    "term": "Searchable PDF",
+    "definition": "A PDF with a text layer so you can find words with Ctrl+F."
+  },
+  {
+    "slug": "pdf-metadata",
+    "term": "PDF metadata",
+    "definition": "Title, author, subject, and keywords stored in PDF properties for discovery."
+  },
+  {
+    "slug": "unlock-pdf",
+    "term": "Unlock PDF",
+    "definition": "Remove a PDF password when you are authorized and know the password."
+  },
+  {
+    "slug": "jpg-to-pdf",
+    "term": "JPG to PDF",
+    "definition": "Convert image files into a PDF document."
+  },
+  {
+    "slug": "adobe-acrobat-alternative",
+    "term": "Adobe Acrobat alternative",
+    "definition": "A PDF app that covers everyday edit/merge/sign tasks without Acrobat Pro pricing."
+  },
+  {
+    "slug": "desktop-pdf-editor",
+    "term": "Desktop PDF editor",
+    "definition": "A Windows (or Mac) app that processes PDFs locally instead of in the browser."
+  },
+  {
+    "slug": "easy-peeze-tools",
+    "term": "Easy Peeze Tools",
+    "definition": "India-first product brand behind Pdf Buddy (Windows PDF editor) and Kharch Log (Android expense tracker)."
+  },
+  {
+    "slug": "pdf-buddy",
+    "term": "Pdf Buddy",
+    "definition": "Desktop PDF editor for Windows by Easy Peeze Tools \u2014 merge, split, compress, sign, OCR, unlock, convert."
+  },
+  {
+    "slug": "kharch-log",
+    "term": "Kharch Log",
+    "definition": "Android expense tracker by Easy Peeze Tools with SMS auto-capture and Google Sheets sync."
+  },
+  {
+    "slug": "kyc-pdf-pack",
+    "term": "KYC PDF pack",
+    "definition": "A single PDF combining photo, ID, address proof, and signature pages for portal uploads."
+  },
+  {
+    "slug": "upi-expense-tracker",
+    "term": "UPI expense tracker",
+    "definition": "An app that turns UPI debit SMS into logged expenses \u2014 Kharch Log\u2019s core workflow."
+  },
+  {
+    "slug": "local-first-pdf",
+    "term": "Local-first PDF",
+    "definition": "Processing PDFs on your device instead of uploading them to a cloud editor."
+  },
+  {
+    "slug": "pdf-whiteout",
+    "term": "PDF whiteout",
+    "definition": "Covering part of a PDF with a white rectangle. Hides pixels but is not forensic redaction."
+  },
+  {
+    "slug": "form-16-pdf",
+    "term": "Form 16 PDF",
+    "definition": "Employer-issued tax certificate PDF often split, compressed, or merged for ITR / loan packs."
+  },
+  {
+    "slug": "offline-pdf-editor",
+    "term": "Offline PDF editor",
+    "definition": "A desktop PDF editor that works without uploading files to a cloud processor \u2014 Pdf Buddy on Windows."
+  },
+  {
+    "slug": "whatsapp-pdf-limit",
+    "term": "WhatsApp PDF limit",
+    "definition": "Practical size caps when sending PDFs on WhatsApp; usually solved by compress + fewer pages."
+  },
+  {
+    "slug": "fillable-pdf",
+    "term": "Fillable PDF",
+    "definition": "A PDF you can type into \u2014 either true form fields or text overlays on a flat page."
+  },
+  {
+    "slug": "dsc-digital-signature",
+    "term": "DSC digital signature",
+    "definition": "India Class 2/3 digital signature certificate used for MCA / Income Tax \u2014 different from a drawn PDF signature."
+  },
+  {
+    "slug": "aadhaar-pdf-privacy",
+    "term": "Aadhaar PDF privacy",
+    "definition": "Treat Aadhaar and ID PDFs as sensitive: prefer local desktop editors over random online upload tools."
+  }
+]

@@ -1,0 +1,1 @@
+# Staging site (staging.easypeeze.com) — do not index.
