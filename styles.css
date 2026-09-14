@@ -2080,15 +2080,15 @@ ol.steps-inline li::before {
   .blog-grid { grid-template-columns: 1fr; }
 }
 
-/* —— Feature tornado (scroll-scrubbed spiral) —— */
+/* —— Feature tornado (full-center scroll spiral) —— */
 .feature-tornado {
-  /* Shorter than before (~40vh per tool) so the page doesn't feel endless */
-  --tornado-h: 320vh;
+  /* Full session: ~1 viewport per tool so each lands clearly */
+  --tornado-h: 520vh;
   margin: 0;
   padding: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 70% 40%, rgba(0, 133, 255, 0.1), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 20% 70%, rgba(0, 196, 154, 0.12), transparent 50%),
+    radial-gradient(ellipse 70% 55% at 50% 45%, rgba(0, 133, 255, 0.14), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 70%, rgba(0, 196, 154, 0.12), transparent 55%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-end) 100%);
   contain: layout;
 }
@@ -2100,76 +2100,101 @@ ol.steps-inline li::before {
   position: sticky;
   top: 0;
   height: 100dvh;
-  min-height: 520px;
+  min-height: 560px;
   max-height: 100dvh;
-  display: grid;
-  grid-template-columns: minmax(200px, 0.85fr) minmax(280px, 1.25fr);
-  gap: clamp(16px, 3.5vw, 40px);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  width: min(var(--max), calc(100% - 40px));
+  justify-content: stretch;
+  width: min(1120px, calc(100% - 24px));
   margin: 0 auto;
-  padding: 64px 0 32px;
+  padding: 56px 0 20px;
   overflow: hidden;
   isolation: isolate;
 }
-.feature-tornado__copy {
+.feature-tornado__head {
   position: relative;
-  z-index: 2;
-  max-width: 28rem;
+  z-index: 3;
+  text-align: center;
+  flex: 0 0 auto;
+  padding: 0 16px;
 }
 .feature-tornado__eyebrow {
-  margin: 0 0 10px;
-  font-size: 0.8rem;
+  margin: 0 0 6px;
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--primary);
 }
 .feature-tornado__title {
-  margin: 0 0 16px;
-  font-size: clamp(1.85rem, 3.6vw, 2.75rem);
-  line-height: 1.08;
+  margin: 0 0 8px;
+  font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+  line-height: 1.1;
   letter-spacing: -0.03em;
 }
 .feature-tornado__active {
-  margin: 0 0 10px;
-  font-size: clamp(1.15rem, 2vw, 1.45rem);
-  font-weight: 700;
+  margin: 0;
+  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  font-weight: 800;
   color: var(--secondary-dark);
-  min-height: 1.4em;
+  min-height: 1.35em;
+  letter-spacing: -0.02em;
 }
 .feature-tornado__hint {
-  margin: 0 0 14px;
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  margin: 8px 0 0;
   color: var(--muted);
-  font-size: 0.95rem;
-  max-width: 32ch;
+  font-size: 0.9rem;
+  text-align: center;
 }
-.feature-tornado__skip {
-  font-size: 0.88rem;
+.feature-tornado__hint a {
   font-weight: 600;
   color: var(--primary);
 }
 .feature-tornado__stage {
   position: relative;
-  height: min(62vh, 480px);
+  flex: 1 1 auto;
   width: 100%;
-  perspective: 1100px;
+  min-height: 360px;
+  perspective: 1400px;
+  perspective-origin: 50% 45%;
   transform-style: preserve-3d;
   overflow: visible;
-  contain: layout style;
+}
+.feature-tornado__vortex {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  width: min(520px, 70vw);
+  height: min(520px, 70vw);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 133, 255, 0.08) 0%, transparent 55%),
+    conic-gradient(from 0deg, rgba(0, 196, 154, 0.07), transparent 40%, rgba(0, 133, 255, 0.08), transparent 75%, rgba(0, 196, 154, 0.06));
+  filter: blur(2px);
+  pointer-events: none;
+  z-index: 0;
+  animation: tornado-spin 28s linear infinite;
+}
+@keyframes tornado-spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 .feature-tornado__card {
   position: absolute;
   left: 50%;
-  top: 50%;
-  width: min(210px, 56vw);
+  top: 48%;
+  width: min(240px, 62vw);
   margin: 0;
-  padding: 16px 16px 14px;
-  border-radius: 16px;
+  padding: 20px 20px 18px;
+  border-radius: 18px;
   background: var(--surface);
   border: 1px solid var(--line);
-  box-shadow: 0 14px 32px rgba(15, 42, 67, 0.1);
-  transform: translate3d(-50%, -50%, 0) scale(0.7);
+  box-shadow: 0 16px 40px rgba(15, 42, 67, 0.14);
+  transform: translate3d(-50%, -50%, 0) scale(0.55);
   transform-origin: center center;
   opacity: 0;
   pointer-events: none;
@@ -2178,38 +2203,37 @@ ol.steps-inline li::before {
   text-decoration: none;
   color: inherit;
   display: block;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  z-index: 1;
 }
 .feature-tornado.is-ready .feature-tornado__card {
   opacity: 1;
 }
 .feature-tornado__card.is-focus {
   pointer-events: auto;
-  border-color: rgba(0, 133, 255, 0.45);
+  border-color: rgba(0, 133, 255, 0.5);
   box-shadow:
-    0 22px 48px rgba(0, 133, 255, 0.18),
-    0 0 0 1px rgba(0, 196, 154, 0.25);
+    0 28px 60px rgba(0, 133, 255, 0.22),
+    0 0 0 2px rgba(0, 196, 154, 0.28);
 }
 .feature-tornado__card:hover {
-  border-color: rgba(0, 133, 255, 0.4);
   text-decoration: none;
 }
 .feature-tornado__num {
   display: block;
   font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--primary);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 .feature-tornado__card h3 {
   margin: 0 0 6px;
-  font-size: 1.12rem;
+  font-size: 1.28rem;
   letter-spacing: -0.02em;
 }
 .feature-tornado__card p {
   margin: 0;
-  font-size: 0.86rem;
+  font-size: 0.9rem;
   color: var(--muted);
   line-height: 1.35;
 }
@@ -2227,22 +2251,21 @@ ol.steps-inline li::before {
     height: auto;
     min-height: 0;
     max-height: none;
-    display: block;
     padding: 12px 0 8px;
     overflow: visible;
   }
   .feature-tornado__hint,
-  .feature-tornado__skip {
+  .feature-tornado__vortex {
     display: none;
   }
   .feature-tornado__stage {
     height: auto;
-    margin-top: 22px;
+    min-height: 0;
+    margin-top: 18px;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
     perspective: none;
-    contain: none;
   }
   .feature-tornado__card,
   .feature-tornado.is-ready .feature-tornado__card {
@@ -2263,6 +2286,9 @@ ol.steps-inline li::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .feature-tornado__vortex {
+    animation: none;
+  }
   .feature-tornado {
     --tornado-h: auto;
   }
@@ -2273,14 +2299,15 @@ ol.steps-inline li::before {
     position: relative;
     height: auto;
     max-height: none;
-    display: block;
   }
-  .feature-tornado__hint {
+  .feature-tornado__hint,
+  .feature-tornado__vortex {
     display: none;
   }
   .feature-tornado__stage {
     height: auto;
-    margin-top: 20px;
+    min-height: 0;
+    margin-top: 18px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
     gap: 12px;

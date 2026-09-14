@@ -222,7 +222,7 @@
   }
 })();
 
-/* Feature tornado — separate IIFE so it cannot break cursor / reveal motion */
+/* Feature tornado — full center spiral; one card flies front per scroll beat */
 (() => {
   const tornado = document.querySelector('.feature-tornado');
   if (!tornado) return;
@@ -241,7 +241,9 @@
   if (!track || !cards.length) return;
 
   const n = cards.length;
+  const TAU = Math.PI * 2;
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
   let raf = 0;
   let focusIdx = -1;
 
@@ -250,31 +252,43 @@
     const total = Math.max(1, track.offsetHeight - window.innerHeight);
     const top = track.getBoundingClientRect().top;
     const p = clamp(-top / total, 0, 1);
-    /* Focus slides 0 → n-1; nearby cards stay in a ring, not piled on center */
+    /* Continuous focus 0 → n-1 across the scroll session */
     const focus = p * (n - 1);
-    const idx = Math.round(focus);
+    const idx = Math.round(clamp(focus, 0, n - 1));
+    /* Whole tornado keeps spinning a bit as you scroll */
+    const spin = p * TAU * 1.35;
+    const stageW = stage.clientWidth || 800;
+    const orbitR = Math.min(260, stageW * 0.32);
 
     cards.forEach((card, i) => {
-      const d = i - focus;
-      const abs = Math.abs(d);
-      const angle = d * 0.95 + focus * 0.4;
-      const radius = abs < 0.08 ? 0 : 48 + Math.min(abs, 2.6) * 88;
-      const x = Math.sin(angle) * radius;
-      const y = Math.cos(angle) * radius * 0.42;
-      const z = -abs * 55;
-      const rotY = d * 28;
-      const rotZ = d * 6;
-      const scale = clamp(1.02 - abs * 0.2, 0.48, 1.02);
-      const opacity = clamp(1.05 - abs * 0.38, 0, 1);
+      const rel = i - focus;
+      const abs = Math.abs(rel);
+      /* Helix slot: cards spaced around a multi-turn spiral */
+      const helix = (rel / n) * TAU * 1.85 + spin;
+      /* Pull toward center-front when this card is the active one */
+      const pull = easeInOut(clamp(1 - abs, 0, 1));
+      const radius = orbitR * (1.05 - pull * 0.98) + Math.min(abs, 3) * 18 * (1 - pull);
+      const x = Math.sin(helix) * radius;
+      const y =
+        Math.cos(helix * 0.55) * radius * 0.22 +
+        rel * 42 * (1 - pull * 0.85);
+      /* Toward camera when focused; deeper when orbiting */
+      const z = pull * 280 - (1 - pull) * (80 + Math.min(abs, 3) * 35);
+      const rotY = Math.sin(helix) * (48 - pull * 48) + rel * 8 * (1 - pull);
+      const rotX = Math.cos(helix) * (12 - pull * 12);
+      const rotZ = Math.sin(helix * 1.2) * (18 - pull * 18);
+      const scale = 0.52 + pull * 0.58 + clamp(0.08 - abs * 0.02, 0, 0.08);
+      /* Keep orbiting cards visible — real tornado ring */
+      const opacity = clamp(0.42 + pull * 0.58 + (1 - Math.min(abs, 2.5) / 2.5) * 0.2, 0.35, 1);
 
       card.style.opacity = String(opacity);
-      card.style.zIndex = String(Math.round(30 - abs * 10 + i));
+      card.style.zIndex = String(Math.round(20 + pull * 40 - abs));
       card.style.transform =
         `translate3d(calc(-50% + ${x.toFixed(1)}px), calc(-50% + ${y.toFixed(1)}px), ${z.toFixed(1)}px)` +
-        ` rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
+        ` rotateX(${rotX.toFixed(1)}deg) rotateY(${rotY.toFixed(1)}deg) rotateZ(${rotZ.toFixed(1)}deg)` +
+        ` scale(${scale.toFixed(3)})`;
       card.classList.toggle('is-focus', i === idx);
-      /* Side cards still clickable when reasonably visible */
-      card.style.pointerEvents = opacity > 0.45 ? 'auto' : 'none';
+      card.style.pointerEvents = pull > 0.55 ? 'auto' : 'none';
     });
 
     if (idx !== focusIdx) {

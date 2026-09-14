@@ -319,14 +319,13 @@
     <section class="feature-tornado" id="feature-tornado" aria-label="Pdf Buddy tools — scroll to reveal">
       <div class="feature-tornado__track">
         <div class="feature-tornado__sticky">
-          <div class="feature-tornado__copy">
+          <header class="feature-tornado__head">
             <p class="feature-tornado__eyebrow">Scroll the toolkit</p>
-            <h2 class="feature-tornado__title">Eight tools.<br />One spiral.</h2>
+            <h2 class="feature-tornado__title">Eight tools. One tornado.</h2>
             <p class="feature-tornado__active" id="tornado-active-label" aria-live="polite">Edit PDF</p>
-            <p class="feature-tornado__hint">Scroll slowly — each tool spins into focus. Tap a card to open it.</p>
-            <a class="feature-tornado__skip" href="#sc-edit-pdf">Skip to details</a>
-          </div>
-          <div class="feature-tornado__stage" id="tornado-stage">
+          </header>
+          <div class="feature-tornado__stage" id="tornado-stage" aria-hidden="false">
+            <div class="feature-tornado__vortex" aria-hidden="true"></div>
             <a class="feature-tornado__card" data-tornado-card data-label="Edit PDF" href="features/edit-pdf/">
               <span class="feature-tornado__num">01</span>
               <h3>Edit PDF</h3>
@@ -368,6 +367,7 @@
               <p>Images &amp; Office → PDF</p>
             </a>
           </div>
+          <p class="feature-tornado__hint">Keep scrolling — each tool flies to the front. <a href="#sc-edit-pdf">Skip</a></p>
         </div>
       </div>
     </section>
