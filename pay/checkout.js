@@ -215,8 +215,7 @@
     var qs =
       'client-id=' +
       encodeURIComponent(clientId) +
-      '&currency=USD&intent=capture&components=buttons' +
-      (sandbox ? '&disable-funding=card,credit,paylater,venmo' : '');
+      '&currency=USD&intent=capture&components=buttons';
     paypalSdkReady = new Promise(function (resolve, reject) {
       var s = document.createElement('script');
       s.src = 'https://www.paypal.com/sdk/js?' + qs;
@@ -242,7 +241,7 @@
             style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
             createOrder: function () {
               var buyer = readBuyer();
-              if (!buyer) return Promise.reject(new Error('Fix the form fields first'));
+              if (!buyer) return Promise.reject(new Error('VALIDATION'));
               setStatus('Creating PayPal order…');
               return createOrder({
                 email: buyer.email,
@@ -261,6 +260,10 @@
                 }
                 setStatus('Continue in PayPal…');
                 return orderData.orderId;
+              }).catch(function (e) {
+                var m = (e && e.message) || 'Could not start PayPal checkout';
+                setStatus(m, true);
+                throw new Error('VALIDATION');
               });
             },
             onApprove: function (data) {
@@ -306,10 +309,19 @@
             },
             onError: function (err) {
               console.error('PayPal onError', err);
+              var msg = String((err && err.message) || err || '');
+              if (/VALIDATION|Fix the form/i.test(msg)) return;
+              if (/Failed to fetch|NetworkError|Load failed/i.test(msg)) {
+                setStatus(
+                  'Could not reach payment API (CORS/network). Staging origin may be blocked — tell Alex to redeploy license API.',
+                  true
+                );
+                return;
+              }
               var sandbox = String(cfg.paypalMode || 'sandbox').toLowerCase() !== 'live';
               setStatus(
                 sandbox
-                  ? 'PayPal failed — click the yellow button, then Log In with a Sandbox Personal buyer (developer.paypal.com → Sandbox → Accounts). Guest cards often fail.'
+                  ? 'PayPal failed — Log In with a Sandbox Personal buyer from developer.paypal.com → Sandbox → Accounts (guest cards often fail).'
                   : 'PayPal checkout failed — try again',
                 true
               );
