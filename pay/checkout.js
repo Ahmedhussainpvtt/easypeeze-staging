@@ -210,15 +210,16 @@
     var clientId = cfg.paypalClientId;
     if (!clientId) return Promise.reject(new Error('PayPal is not configured'));
     var sandbox = String(cfg.paypalMode || 'sandbox').toLowerCase() !== 'live';
-    var sdkHost = sandbox ? 'https://www.sandbox.paypal.com/sdk/js' : 'https://www.paypal.com/sdk/js';
+    // Official host for both modes — client-id selects sandbox vs live.
+    // Sandbox guest cards are flaky; disable card funding so buyers log in.
     var qs =
       'client-id=' +
       encodeURIComponent(clientId) +
       '&currency=USD&intent=capture&components=buttons' +
-      (sandbox ? '&buyer-country=US' : '');
+      (sandbox ? '&disable-funding=card,credit,paylater,venmo' : '');
     paypalSdkReady = new Promise(function (resolve, reject) {
       var s = document.createElement('script');
-      s.src = sdkHost + '?' + qs;
+      s.src = 'https://www.paypal.com/sdk/js?' + qs;
       s.onload = function () {
         resolve();
       };
@@ -303,8 +304,15 @@
             onCancel: function () {
               setStatus('PayPal checkout cancelled');
             },
-            onError: function () {
-              setStatus('PayPal checkout failed — try again', true);
+            onError: function (err) {
+              console.error('PayPal onError', err);
+              var sandbox = String(cfg.paypalMode || 'sandbox').toLowerCase() !== 'live';
+              setStatus(
+                sandbox
+                  ? 'PayPal failed — click the yellow button, then Log In with a Sandbox Personal buyer (developer.paypal.com → Sandbox → Accounts). Guest cards often fail.'
+                  : 'PayPal checkout failed — try again',
+                true
+              );
             }
           })
           .render('#paypal-buttons');
