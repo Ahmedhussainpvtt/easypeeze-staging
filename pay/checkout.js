@@ -1,9 +1,27 @@
 (function () {
   var cfg = window.EASYPEEZE_PAY || {};
   var params = new URLSearchParams(location.search);
-  var planKey = (params.get('plan') || 'yearly').toLowerCase();
-  if (planKey !== 'lifetime') planKey = 'yearly';
-  var plan = (cfg.plans && cfg.plans[planKey]) || cfg.plans.yearly;
+  var productParam = (params.get('product') || cfg.product || 'pdfbuddy').toLowerCase();
+  if (productParam === 'kharch' || productParam === 'expense') productParam = 'kharchlog';
+  if (productParam !== 'kharchlog') productParam = 'pdfbuddy';
+  cfg.product = productParam;
+
+  if (productParam === 'kharchlog') {
+    cfg.plans = {
+      lifetime: {
+        planType: 'lifetime',
+        amountInr: 149,
+        amountUsd: 2,
+        label: 'Kharch Log Lifetime',
+        once: 'one-time'
+      }
+    };
+  }
+
+  var planKey = (params.get('plan') || (productParam === 'kharchlog' ? 'lifetime' : 'yearly')).toLowerCase();
+  if (productParam === 'kharchlog') planKey = 'lifetime';
+  else if (planKey !== 'lifetime') planKey = 'yearly';
+  var plan = (cfg.plans && cfg.plans[planKey]) || cfg.plans.yearly || cfg.plans.lifetime;
   var USD_ENABLED = !!(cfg.paypalClientId || cfg.usdEnabled);
   var requestedCurrency = (params.get('currency') || 'INR').toUpperCase();
   var currency = USD_ENABLED && requestedCurrency === 'USD' ? 'USD' : 'INR';
@@ -72,7 +90,25 @@
   }
 
   syncPrice();
-  if (titleEl && plan) titleEl.textContent = plan.label || 'Unlock Pdf Buddy';
+  if (titleEl && plan) {
+    titleEl.textContent =
+      plan.label || (productParam === 'kharchlog' ? 'Unlock Kharch Log' : 'Unlock Pdf Buddy');
+  }
+  var subEl = document.getElementById('pay-sub');
+  if (subEl) {
+    subEl.textContent =
+      productParam === 'kharchlog'
+        ? 'Use the same Google email you sign in with in the Android app.'
+        : 'Use the same Google email you sign in with in the Windows app.';
+  }
+  var tipEl = document.querySelector('.pay-email-check');
+  if (tipEl && productParam === 'kharchlog') {
+    tipEl.textContent = 'Download the APK from kharchlog.com after payment — sign in with this Google email.';
+  }
+  if (fineEl && productParam === 'kharchlog') {
+    fineEl.innerHTML =
+      '<a href="https://staging.kharchlog.com/" rel="noopener">Kharch Log home</a> · <a href="../pricing/#kharch-log">Back to pricing</a>';
+  }
   if (params.get('email') && emailInput) emailInput.value = params.get('email');
 
   document.querySelectorAll('.pay-currency__btn').forEach(function (btn) {
@@ -186,7 +222,12 @@
       return null;
     }
     if (!email || email.indexOf('@') < 1 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setStatus('Enter the Google email you use in Pdf Buddy', true);
+      setStatus(
+        productParam === 'kharchlog'
+          ? 'Enter the Google email you use in Kharch Log'
+          : 'Enter the Google email you use in Pdf Buddy',
+        true
+      );
       if (emailInput) emailInput.focus();
       return null;
     }
@@ -347,7 +388,7 @@
           firstName: buyer.firstName,
           lastName: buyer.lastName,
           name: fullName,
-          product: 'pdfbuddy',
+          product: cfg.product || 'pdfbuddy',
           planType: plan.planType
         },
         theme: { color: '#0085FF' },
@@ -356,7 +397,7 @@
           q.set('email', buyer.email);
           q.set('firstName', buyer.firstName);
           q.set('lastName', buyer.lastName);
-          q.set('product', 'pdfbuddy');
+          q.set('product', cfg.product || 'pdfbuddy');
           q.set('plan', plan.planType);
           q.set('phone', buyer.phone || '');
           if (response.razorpay_payment_id) q.set('payment_id', response.razorpay_payment_id);
